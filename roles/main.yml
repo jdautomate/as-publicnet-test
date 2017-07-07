@@ -62,7 +62,7 @@
 - name: view vpn status output
   command: /usr/local/openvpn_as/scripts/sacli vpnsummary >> /root/test_results.log
 
-- name: fetch results.txt
+- name: fetch test_results.log
   fetch:
     src: /root/test_results.log
     dest: /tmp/test_results.log
