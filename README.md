@@ -17,7 +17,7 @@ Execute these commands
 * Wait for playbook to finish, if you do not see ansible commands, run
 * vagrant provision
 
-The playbook will take a bit to run, it has to download and install AS, after that is done the tests are fast.  Results can be seen in the textfile -
+The playbook will take a bit to run, it has to download and install AS, after that is done the tests are fast.  Results can be seen in the log file -
 /tmp/test_results.log (on your local machine)
 
 vagrant destroy - to wipe the VM
