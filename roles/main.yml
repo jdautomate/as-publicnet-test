@@ -1,0 +1,69 @@
+---
+- name: make sure host can connect to VM
+  ping: 
+
+- name: get AS .deb package - 2.1.9
+  get_url:
+    url: http://swupdate.openvpn.org/as/openvpn-as-2.1.9-Ubuntu16.amd_64.deb
+    dest: /root/
+
+- name: install AS .deb package
+  apt:
+    deb: /root/openvpn-as-2.1.9-Ubuntu16.amd_64.deb
+- name: basic tests - is package downloaded?
+  raw: ls /root | grep openvpn-as-* >> /root/test_results.log
+
+- name: sha256 checksum results
+  raw: sha256sum /root/openvpn-as-2.1.9-Ubuntu16.amd_64.deb >> /root/test_results.log
+
+- name: find openvpn_as directory
+  raw: ls /usr/local | grep openvpn_as >> results.txt
+
+- name: is openvpnas service up and running?
+  raw: service openvpnas status | head | grep openvpnas.service >> /root/test_results.log
+
+- name: pid checks
+  raw: ps aux | grep openvpnas >> /root/results.txt
+
+- name: choose local authentication
+  command: /usr/local/openvpn_as/scripts/sacli --key auth.module.type --value local ConfigPut
+
+- name: add user named testuser
+  command: /usr/local/openvpn_as/scripts/sacli -u testuser -k type -v user_connect UserPropPut
+
+- name: add admin user named admin
+  command: /usr/local/openvpn_as/scripts/sacli -u admin -k prop_superuser -v true UserPropPut
+
+- name: restart openvpnas service
+  service: 
+    name: openvpnas
+    state: restarted
+
+- name: test authentication for testuser
+  raw: /usr/local/openvpn_as/scripts/authcli -u testuser -p password >> /root/test_results.log
+
+- name: test authentication for admin
+  raw: /usr/local/openvpn_as/scripts/authcli -u testuser -p admin >> /root/test_results.log
+
+- name: add user-specific access controls - testuser nat to 10.0.0.0/24
+  command: /usr/local/openvpn_as/scripts/sacli -u testuser -k access_to.0 --value "+NAT:10.0.0.0/24" UserPropPut
+
+- name: add user-specific access controls - admin route to 192.168.33.0/24
+  command: /usr/local/openvpn_as/scripts/sacli -u admin -k access_to.0 --value "+ROUTE:192.168.33.0/24" UserPropPut
+
+- name: restart openvpnas service
+  service: 
+    name: openvpnas
+    state: restarted
+    
+- name: view all users in AS local auth
+  raw: /usr/local/openvpn_as/scripts/confdba -a >> /root/test_results.log
+
+- name: view vpn status output
+  command: /usr/local/openvpn_as/scripts/sacli vpnsummary >> /root/test_results.log
+
+- name: fetch results.txt
+  fetch:
+    src: /root/test_results.log
+    dest: /tmp/test_results.log
+    flat: yes

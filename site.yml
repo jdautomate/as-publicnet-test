@@ -1,0 +1,7 @@
+---
+- hosts: all
+  become: True
+  roles:
+  tasks:
+    - include: roles/main.yml
+      static: no
