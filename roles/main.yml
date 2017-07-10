@@ -6,10 +6,16 @@
   get_url:
     url: http://swupdate.openvpn.org/as/openvpn-as-2.1.9-Ubuntu16.amd_64.deb
     dest: /root/
-
+  
 - name: install AS .deb package
   apt:
     deb: /root/openvpn-as-2.1.9-Ubuntu16.amd_64.deb
+
+- name: change openvpn pass
+  user: 
+    name: openvpn
+    password: openvpn
+
 - name: basic tests - is package downloaded?
   raw: ls /root | grep openvpn-as-* >> /root/test_results.log
 

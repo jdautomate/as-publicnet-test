@@ -4,6 +4,8 @@
 OS=ubuntu
 RELEASE=xenial64
 
+echo "Setting up Vagrantfile"
+
 vagrant init $OS/$RELEASE
 
 # Clear default Vagrantfile
