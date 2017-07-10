@@ -7,7 +7,7 @@
 
 * Dependencies are ansible, vagrant and virtualbox on your local machine
 
-* Clone the repo with git@bitbucket.org:jdopenvpn/as-local-test.git
+* Clone the repo with git clone git@bitbucket.org:jdopenvpn/as-publicnet-test.git
 * run ./setup.sh (script will create and start the VM, replace Vagrantfile, apt-get update and install python - necessary for ansible) 
 
 Execute these commands
