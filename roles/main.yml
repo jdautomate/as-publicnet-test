@@ -2,14 +2,14 @@
 - name: make sure host can connect to VM
   ping: 
 
-- name: get AS .deb package - 2.1.9
+- name: get AS .deb package - 2.1.12
   get_url:
-    url: http://swupdate.openvpn.org/as/openvpn-as-2.1.9-Ubuntu16.amd_64.deb
+    url: http://ovpnas.2.1.12.s3.amazonaws.com/openvpn-as-2.1.12-Ubuntu16.amd_64.deb
     dest: /root/
   
 - name: install AS .deb package
   apt:
-    deb: /root/openvpn-as-2.1.9-Ubuntu16.amd_64.deb
+    deb: /root/openvpn-as-2.1.12-Ubuntu16.amd_64.deb
 
 - name: change openvpn pass
   user: 
@@ -18,9 +18,6 @@
 
 - name: basic tests - is package downloaded?
   raw: ls /root | grep openvpn-as-* >> /root/test_results.log
-
-- name: sha256 checksum results
-  raw: sha256sum /root/openvpn-as-2.1.9-Ubuntu16.amd_64.deb >> /root/test_results.log
 
 - name: find openvpn_as directory
   raw: ls /usr/local | grep openvpn_as >> results.txt
@@ -40,16 +37,17 @@
 - name: add admin user named admin
   command: /usr/local/openvpn_as/scripts/sacli -u admin -k prop_superuser -v true UserPropPut
 
-- name: restart openvpnas service
-  service: 
-    name: openvpnas
-    state: restarted
+- name: warm restart
+  command: /usr/local/openvpn_as/scripts/sacli start
+
+- name: add password for testuser
+  command: /usr/local/openvpn_as/scripts/sacli --user testuser --new_pass testuserpass SetLocalPassword
+
+- name: add password for admin
+  command: /usr/local/openvpn_as/scripts/sacli --user admin --new_pass adminpass SetLocalPassword
 
 - name: test authentication for testuser
-  raw: /usr/local/openvpn_as/scripts/authcli -u testuser -p password >> /root/test_results.log
-
-- name: test authentication for admin
-  raw: /usr/local/openvpn_as/scripts/authcli -u testuser -p admin >> /root/test_results.log
+  raw: /usr/local/openvpn_as/scripts/authcli -u testuser -p testuserpass >> /root/test_results.log
 
 - name: add user-specific access controls - testuser nat to 10.0.0.0/24
   command: /usr/local/openvpn_as/scripts/sacli -u testuser -k access_to.0 --value "+NAT:10.0.0.0/24" UserPropPut
