@@ -4,7 +4,7 @@
 
 - name: get AS .deb package - 2.1.12
   get_url:
-    url: http://ovpnas.2.1.12.s3.amazonaws.com/openvpn-as-2.1.12-Ubuntu16.amd_64.deb
+    url: http://swupdate.openvpn.net/as/openvpn-as-2.1.12-Ubuntu16.amd_64.deb
     dest: /root/
   
 - name: install AS .deb package
