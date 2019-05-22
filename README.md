@@ -1,6 +1,6 @@
 ### What is this repository for? ###
 
-* Access Server Test VM - Local using vagrant, ansible and virtualbox
+* OpenVPN Access Server Test VM - Local using vagrant, ansible and virtualbox
 * AS 2.1.12 from AWS bucket
 
 ### Where to start? ###
